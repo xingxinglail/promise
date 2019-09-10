@@ -133,6 +133,10 @@ class Promise {
         return callback[2]
     }
 
+    catch (onRejected?) {
+        return this.then(null, onRejected)
+    }
+
     private resolveWithSelf () {
         this.reject(new TypeError('Chaining cycle detected for promise #<Promise>'))
     }

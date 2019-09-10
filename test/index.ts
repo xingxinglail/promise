@@ -25,6 +25,43 @@ describe('Promise', () => {
         })
     })
 
+    it('catch', done => {
+        const cb = sinon.fake()
+        const cb2 = sinon.fake()
+        const cb3 = sinon.fake()
+        const cb4 = sinon.fake()
+        const cb5 = sinon.fake()
+        const promise = new Promise((_, reject) => {
+            reject(1)
+        });
+        promise
+            .catch(err => {
+                cb(err)
+                return Promise.reject(2)
+            })
+            .then(null, err => {
+                cb2(err)
+                return Promise.resolve(3)
+            })
+            .then(() => {
+                return Promise.reject(4)
+            })
+            .then(res => {
+                cb3()
+                return Promise.resolve(5)
+            })
+            .catch(cb4)
+            .then(cb5)
+        setTimeout(() => {
+            assert(cb.calledWith(1))
+            assert(cb2.calledWith(2))
+            assert(cb3.notCalled)
+            assert(cb4.calledWith(4))
+            assert(cb5.called)
+            done()
+        }, 100)
+    })
+
     it('2.1.2 fulfilled 状态时：不能再状态为任何其他状态，必须有一个 value，且不可改变', done => {
         const promise = new Promise((resolve, reject) => {
             resolve('hello')
