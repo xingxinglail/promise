@@ -25,141 +25,6 @@ describe('Promise', () => {
         })
     })
 
-    it('catch', done => {
-        const cb = sinon.fake()
-        const cb2 = sinon.fake()
-        const cb3 = sinon.fake()
-        const cb4 = sinon.fake()
-        const cb5 = sinon.fake()
-        const promise = new Promise((_, reject) => {
-            reject(1)
-        });
-        promise
-            .catch(err => {
-                cb(err)
-                return Promise.reject(2)
-            })
-            .then(null, err => {
-                cb2(err)
-                return Promise.resolve(3)
-            })
-            .then(() => {
-                return Promise.reject(4)
-            })
-            .then(() => {
-                cb3()
-                return Promise.resolve(5)
-            })
-            .catch(cb4)
-            .then(cb5)
-        setTimeout(() => {
-            assert(cb.calledWith(1))
-            assert(cb2.calledWith(2))
-            assert(cb3.notCalled)
-            assert(cb4.calledWith(4))
-            assert(cb5.called)
-            done()
-        }, 100)
-    })
-
-    it('嵌套catch', done => {
-        const cb = sinon.fake()
-        const cb2 = sinon.fake()
-        const cb3 = sinon.fake()
-        const cb4 = sinon.fake()
-        const cb5 = sinon.fake()
-        const cb6 = sinon.fake()
-        const promise = new Promise((_, reject) => {
-            reject(1)
-        });
-        promise
-            .catch(err => {
-                cb(err)
-                promise
-                    .then(null, cb2)
-                    .then(cb3)
-                    .then(() => {
-                        return Promise.reject(4)
-                    })
-                    .then(cb4)
-                    .catch(cb5)
-                    .then(cb6)
-            })
-        setTimeout(() => {
-            assert(cb.calledWith(1))
-            assert(cb2.calledWith(1))
-            assert(cb3.called)
-            assert(cb4.notCalled)
-            assert(cb5.calledWith(4))
-            assert(cb6.called)
-            done()
-        }, 100)
-    })
-
-    it('嵌套catch2', done => {
-        const cb = sinon.fake()
-        const cb2 = sinon.fake()
-        const cb3 = sinon.fake()
-        const cb4 = sinon.fake()
-        const cb41 = sinon.fake()
-        const cb5 = sinon.fake()
-        const cb6 = sinon.fake()
-        const cb7 = sinon.fake()
-        const cb8 = sinon.fake()
-        const cb9 = sinon.fake()
-        const cb10 = sinon.fake()
-        const cb11 = sinon.fake()
-        const cb12 = sinon.fake()
-        const cb13 = sinon.fake()
-        const promise = new Promise((_, reject) => {
-            reject(1)
-        });
-        promise
-            .catch(err => {
-                cb(err)
-                promise
-                    .then(null, cb2)
-                    .then(cb3)
-                    .then(() => {
-                        return Promise.reject(4)
-                    })
-                    .then(cb41, cb4)
-                    .catch(cb5)
-                    .then(cb6)
-                    .then(() => {
-                        return Promise.reject(8)
-                    })
-                    .then(cb7, cb8)
-                    .then(() => {
-                        promise
-                            .then(null, cb9)
-                            .then(cb10)
-                            .then(() => {
-                                return Promise.reject(4)
-                            })
-                            .then(cb11, cb12)
-                            .catch(cb13)
-                    })
-            })
-        setTimeout(() => {
-            assert(cb.calledWith(1))
-            assert(cb2.calledWith(1))
-            assert(cb3.called)
-            assert(cb4.calledWith(4))
-            assert(cb41.notCalled)
-            assert(cb5.notCalled)
-            assert(cb6.called)
-            assert(cb7.notCalled)
-            assert(cb8.calledWith(8))
-            assert(cb9.calledWith(1))
-            assert(cb10.called)
-            assert(cb11.notCalled)
-            assert(cb12.called)
-            assert(cb13.notCalled)
-            done()
-        }, 100)
-    })
-
     it('2.1.2 fulfilled 状态时：不能再状态为任何其他状态，必须有一个 value，且不可改变', done => {
         const promise = new Promise((resolve, reject) => {
             resolve('hello')
@@ -1010,112 +875,261 @@ describe('Promise', () => {
         })
     })
 
-    it('Promise.resolve', done => {
-        const res = Promise.resolve(11)
-        res
-            .then(res => {
-                assert.equal(res, 11)
-                return res - 1
-            })
-            .then(res => {
-                assert.equal(res, 10)
-                return res - 1
-            })
-            .then(res => {
-                assert.equal(res, 9)
-                done()
-            })
+    describe('Promise.resolve', () => {
+
+        it('基本功能', done => {
+            const res = Promise.resolve(11)
+            res
+                .then(res => {
+                    assert.equal(res, 11)
+                    return res - 1
+                })
+                .then(res => {
+                    assert.equal(res, 10)
+                    return res - 1
+                })
+                .then(res => {
+                    assert.equal(res, 9)
+                    done()
+                })
+        })
     })
 
-    it('Promise.reject', done => {
-        const res = Promise.reject(11)
-        res
-            .then(null, res => {
-                assert.equal(res, 11)
-                return res - 1
-            })
-            .then(res => {
-                assert.equal(res, 10)
-                return res - 1
-            })
-            .then(res => {
-                assert.equal(res, 9)
-                done()
-            })
+    describe('Promise.reject', () => {
+
+        it('基本功能', done => {
+            const res = Promise.reject(11)
+            res
+                .then(null, res => {
+                    assert.equal(res, 11)
+                    return res - 1
+                })
+                .then(res => {
+                    assert.equal(res, 10)
+                    return res - 1
+                })
+                .then(res => {
+                    assert.equal(res, 9)
+                    done()
+                })
+        })
     })
 
-    it('Promise.all', done => {
-        const p = new Promise(resolve => {
-            setTimeout(resolve, 50, 1)
-        })
-        const p2 = new Promise(resolve => {
-            setTimeout(resolve, 100, 2)
-        })
-        const p3 = Promise.resolve(3)
-        Promise.all([p, null, p2, p3, [1, 2], { a: 2 }])
-            .then(res => {
-                assert.deepEqual(res, [1,null, 2, 3, [1, 2], { a: 2 }])
+    describe('catch', () => {
+        it('触发catch', done => {
+            const cb = sinon.fake()
+            const cb2 = sinon.fake()
+            const cb3 = sinon.fake()
+            const cb4 = sinon.fake()
+            const cb5 = sinon.fake()
+            const promise = new Promise((_, reject) => {
+                reject(1)
+            });
+            promise
+                .catch(err => {
+                    cb(err)
+                    return Promise.reject(2)
+                })
+                .then(null, err => {
+                    cb2(err)
+                    return Promise.resolve(3)
+                })
+                .then(() => {
+                    return Promise.reject(4)
+                })
+                .then(() => {
+                    cb3()
+                    return Promise.resolve(5)
+                })
+                .catch(cb4)
+                .then(cb5)
+            setTimeout(() => {
+                assert(cb.calledWith(1))
+                assert(cb2.calledWith(2))
+                assert(cb3.notCalled)
+                assert(cb4.calledWith(4))
+                assert(cb5.called)
                 done()
-            })
+            }, 100)
+        })
+
+        it('嵌套catch', done => {
+            const cb = sinon.fake()
+            const cb2 = sinon.fake()
+            const cb3 = sinon.fake()
+            const cb4 = sinon.fake()
+            const cb5 = sinon.fake()
+            const cb6 = sinon.fake()
+            const promise = new Promise((_, reject) => {
+                reject(1)
+            });
+            promise
+                .catch(err => {
+                    cb(err)
+                    promise
+                        .then(null, cb2)
+                        .then(cb3)
+                        .then(() => {
+                            return Promise.reject(4)
+                        })
+                        .then(cb4)
+                        .catch(cb5)
+                        .then(cb6)
+                })
+            setTimeout(() => {
+                assert(cb.calledWith(1))
+                assert(cb2.calledWith(1))
+                assert(cb3.called)
+                assert(cb4.notCalled)
+                assert(cb5.calledWith(4))
+                assert(cb6.called)
+                done()
+            }, 100)
+        })
+
+        it('嵌套catch2', done => {
+            const cb = sinon.fake()
+            const cb2 = sinon.fake()
+            const cb3 = sinon.fake()
+            const cb4 = sinon.fake()
+            const cb41 = sinon.fake()
+            const cb5 = sinon.fake()
+            const cb6 = sinon.fake()
+            const cb7 = sinon.fake()
+            const cb8 = sinon.fake()
+            const cb9 = sinon.fake()
+            const cb10 = sinon.fake()
+            const cb11 = sinon.fake()
+            const cb12 = sinon.fake()
+            const cb13 = sinon.fake()
+            const promise = new Promise((_, reject) => {
+                reject(1)
+            });
+            promise
+                .catch(err => {
+                    cb(err)
+                    promise
+                        .then(null, cb2)
+                        .then(cb3)
+                        .then(() => {
+                            return Promise.reject(4)
+                        })
+                        .then(cb41, cb4)
+                        .catch(cb5)
+                        .then(cb6)
+                        .then(() => {
+                            return Promise.reject(8)
+                        })
+                        .then(cb7, cb8)
+                        .then(() => {
+                            promise
+                                .then(null, cb9)
+                                .then(cb10)
+                                .then(() => {
+                                    return Promise.reject(4)
+                                })
+                                .then(cb11, cb12)
+                                .catch(cb13)
+                        })
+                })
+            setTimeout(() => {
+                assert(cb.calledWith(1))
+                assert(cb2.calledWith(1))
+                assert(cb3.called)
+                assert(cb4.calledWith(4))
+                assert(cb41.notCalled)
+                assert(cb5.notCalled)
+                assert(cb6.called)
+                assert(cb7.notCalled)
+                assert(cb8.calledWith(8))
+                assert(cb9.calledWith(1))
+                assert(cb10.called)
+                assert(cb11.notCalled)
+                assert(cb12.called)
+                assert(cb13.notCalled)
+                done()
+            }, 100)
+        })
     })
 
-    it('Promise.all catch', done => {
-        const p = new Promise(resolve => {
-            setTimeout(resolve, 50, 1)
-        })
-        const p2 = new Promise(resolve => {
-            setTimeout(resolve, 100, 2)
-        })
-        const p3 = Promise.reject(3)
-        Promise.all([p, null, p2, p3, [1, 2], { a: 2 }])
-            .catch(err => {
-                assert.equal(err, 3)
-                done()
+    describe('Promise.all', () => {
+
+        it('基本功能', done => {
+            const p = new Promise(resolve => {
+                setTimeout(resolve, 50, 1)
             })
+            const p2 = new Promise(resolve => {
+                setTimeout(resolve, 100, 2)
+            })
+            const p3 = Promise.resolve(3)
+            Promise.all([p, null, p2, p3, [1, 2], { a: 2 }])
+                .then(res => {
+                    assert.deepEqual(res, [1,null, 2, 3, [1, 2], { a: 2 }])
+                    done()
+                })
+        })
+
+        it('Promise.all catch', done => {
+            const p = new Promise(resolve => {
+                setTimeout(resolve, 50, 1)
+            })
+            const p2 = new Promise(resolve => {
+                setTimeout(resolve, 100, 2)
+            })
+            const p3 = Promise.reject(3)
+            Promise.all([p, null, p2, p3, [1, 2], { a: 2 }])
+                .catch(err => {
+                    assert.equal(err, 3)
+                    done()
+                })
+        })
     })
 
-    it('Promise.race', done => {
-        const p = new Promise(resolve => {
-            setTimeout(resolve, 50, 1)
-        })
-        const p2 = new Promise(resolve => {
-            setTimeout(resolve, 100, 2)
-        })
-        const p3 = Promise.resolve(3)
-        Promise.race([p, p2, p3])
-            .then(res => {
-                assert.equal(res, 3)
-                done()
-            })
-    })
+    describe('Promise.race', () => {
 
-    it('Promise.race2', done => {
-        const p = new Promise(resolve => {
-            setTimeout(resolve, 50, 1)
-        })
-        const p2 = new Promise(resolve => {
-            setTimeout(resolve, 100, 2)
-        })
-        const p3 = Promise.resolve(3)
-        Promise.race([p, true, p2, p3, [1, 2], { a: 2 }])
-            .then(res => {
-                assert.equal(res, true)
-                done()
+        it('基本功能', done => {
+            const p = new Promise(resolve => {
+                setTimeout(resolve, 50, 1)
             })
-    })
+            const p2 = new Promise(resolve => {
+                setTimeout(resolve, 100, 2)
+            })
+            const p3 = Promise.resolve(3)
+            Promise.race([p, p2, p3])
+                .then(res => {
+                    assert.equal(res, 3)
+                    done()
+                })
+        })
 
-    it('Promise.race catch', done => {
-        const p = new Promise(resolve => {
-            setTimeout(resolve, 50, 1)
-        })
-        const p2 = new Promise(resolve => {
-            setTimeout(resolve, 100, 2)
-        })
-        const p3 = Promise.reject(3)
-        Promise.race([p, p2, p3])
-            .catch(err => {
-                assert.equal(err, 3)
-                done()
+        it('传入非Promise对象', done => {
+            const p = new Promise(resolve => {
+                setTimeout(resolve, 50, 1)
             })
+            const p2 = new Promise(resolve => {
+                setTimeout(resolve, 100, 2)
+            })
+            const p3 = Promise.resolve(3)
+            Promise.race([p, true, p2, p3, [1, 2], { a: 2 }])
+                .then(res => {
+                    assert.equal(res, true)
+                    done()
+                })
+        })
+
+        it('catch', done => {
+            const p = new Promise(resolve => {
+                setTimeout(resolve, 50, 1)
+            })
+            const p2 = new Promise(resolve => {
+                setTimeout(resolve, 100, 2)
+            })
+            const p3 = Promise.reject(3)
+            Promise.race([p, p2, p3])
+                .catch(err => {
+                    assert.equal(err, 3)
+                    done()
+                })
+        })
     })
 })
