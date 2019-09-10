@@ -62,6 +62,51 @@ class Promise {
         return defer
     }
 
+    static all (arr) {
+        if (Array.isArray(arr)) {
+            const results = []
+            const fn = (length, resolve) => {
+                let count = 0
+                return (index, val) => {
+                    count += 1
+                    results[index] = val
+                    if (count === length) resolve(results)
+                }
+            }
+            return new Promise((resolve, reject) => {
+                const promiseLen = arr.filter(c => c instanceof Promise).length
+                const done = fn(promiseLen, resolve)
+                arr.forEach((data, index) => {
+                    if (data instanceof Promise) {
+                        data.then(res => {
+                            done(index, res)
+                        }, reject)
+                    } else {
+                        results[index] = data
+                    }
+                })
+            })
+        } else {
+            return Promise.reject(new TypeError())
+        }
+    }
+
+    static race (arr) {
+        if (Array.isArray(arr)) {
+            return new Promise((resolve, reject) => {
+                arr.forEach((data, index) => {
+                    if (data instanceof Promise) {
+                        data.then(resolve, reject)
+                    } else {
+                        resolve(data)
+                    }
+                })
+            })
+        } else {
+            return Promise.reject(new TypeError())
+        }
+    }
+
     private resolve (value?) {
         nextTick(() => {
             if (this.state !== State.pending) return

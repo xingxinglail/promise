@@ -96,48 +96,6 @@ describe('Promise', () => {
         }, 100)
     })
 
-    it('??', done => {
-        // const promise = new Promise(resolve => {
-        //     resolve(1)
-        // });
-        //
-        // promise
-        //     .then(() => {
-        //         return Promise.reject(1)
-        //     })
-        //     .then(null, () => {
-        //         console.log(1)
-        //     })
-        //     .catch(() => {
-        //         console.log(4)
-        //     })
-        //     .then(() => {
-        //         promise
-        //             .then(() => {
-        //                 console.log(2)
-        //             })
-        //             .then(() => {
-        //                 console.log(3)
-        //                 done()
-        //             })
-        //     })
-        const promise = new Promise((_, reject) => {
-            reject(1)
-        });
-        promise
-            .catch(err => {
-                console.log(err, 'err')
-                promise
-                    .then(() => {
-                        console.log('done')
-                        done()
-                    }, err2 => {
-                        console.log(err2, 'err2');
-                        done()
-                    })
-            })
-    })
-
     it('嵌套catch2', done => {
         const cb = sinon.fake()
         const cb2 = sinon.fake()
@@ -1082,6 +1040,81 @@ describe('Promise', () => {
             })
             .then(res => {
                 assert.equal(res, 9)
+                done()
+            })
+    })
+
+    it('Promise.all', done => {
+        const p = new Promise(resolve => {
+            setTimeout(resolve, 50, 1)
+        })
+        const p2 = new Promise(resolve => {
+            setTimeout(resolve, 100, 2)
+        })
+        const p3 = Promise.resolve(3)
+        Promise.all([p, null, p2, p3, [1, 2], { a: 2 }])
+            .then(res => {
+                assert.deepEqual(res, [1,null, 2, 3, [1, 2], { a: 2 }])
+                done()
+            })
+    })
+
+    it('Promise.all catch', done => {
+        const p = new Promise(resolve => {
+            setTimeout(resolve, 50, 1)
+        })
+        const p2 = new Promise(resolve => {
+            setTimeout(resolve, 100, 2)
+        })
+        const p3 = Promise.reject(3)
+        Promise.all([p, null, p2, p3, [1, 2], { a: 2 }])
+            .catch(err => {
+                assert.equal(err, 3)
+                done()
+            })
+    })
+
+    it('Promise.race', done => {
+        const p = new Promise(resolve => {
+            setTimeout(resolve, 50, 1)
+        })
+        const p2 = new Promise(resolve => {
+            setTimeout(resolve, 100, 2)
+        })
+        const p3 = Promise.resolve(3)
+        Promise.race([p, p2, p3])
+            .then(res => {
+                assert.equal(res, 3)
+                done()
+            })
+    })
+
+    it('Promise.race2', done => {
+        const p = new Promise(resolve => {
+            setTimeout(resolve, 50, 1)
+        })
+        const p2 = new Promise(resolve => {
+            setTimeout(resolve, 100, 2)
+        })
+        const p3 = Promise.resolve(3)
+        Promise.race([p, true, p2, p3, [1, 2], { a: 2 }])
+            .then(res => {
+                assert.equal(res, true)
+                done()
+            })
+    })
+
+    it('Promise.race catch', done => {
+        const p = new Promise(resolve => {
+            setTimeout(resolve, 50, 1)
+        })
+        const p2 = new Promise(resolve => {
+            setTimeout(resolve, 100, 2)
+        })
+        const p3 = Promise.reject(3)
+        Promise.race([p, p2, p3])
+            .catch(err => {
+                assert.equal(err, 3)
                 done()
             })
     })
