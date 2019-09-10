@@ -111,7 +111,9 @@ class Promise {
                 // 2.2.4 promise.then中嵌套promise.then，如果已经 fulfilled 就直接调用onFulfilled
                 // 因为在当前tick中，嵌套的promise.then还未存放到callbacks里面
                 nextTick(() => {
-                    onFulfilled.call(undefined, this.value)
+                    const value = onFulfilled.call(undefined, this.value)
+                    // 处理后续
+                    callback[2].resolveWith.call(callback[2], value)
                 })
             } else {
                 callback[0] = onFulfilled
@@ -122,7 +124,9 @@ class Promise {
                 // 2.2.4 promise.then中嵌套promise.then，如果已经 rejected 就直接调用 onRejected
                 // 因为在当前tick中，嵌套的promise.then还未存放到callbacks里面
                 nextTick(() => {
-                    onRejected.call(undefined, this.reason)
+                    const value = onRejected.call(undefined, this.reason)
+                    // 处理后续
+                    callback[2].resolveWith.call(callback[2], value)
                 })
             } else {
                 callback[1] = onRejected

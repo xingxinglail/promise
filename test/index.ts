@@ -46,7 +46,7 @@ describe('Promise', () => {
             .then(() => {
                 return Promise.reject(4)
             })
-            .then(res => {
+            .then(() => {
                 cb3()
                 return Promise.resolve(5)
             })
@@ -58,6 +58,146 @@ describe('Promise', () => {
             assert(cb3.notCalled)
             assert(cb4.calledWith(4))
             assert(cb5.called)
+            done()
+        }, 100)
+    })
+
+    it('嵌套catch', done => {
+        const cb = sinon.fake()
+        const cb2 = sinon.fake()
+        const cb3 = sinon.fake()
+        const cb4 = sinon.fake()
+        const cb5 = sinon.fake()
+        const cb6 = sinon.fake()
+        const promise = new Promise((_, reject) => {
+            reject(1)
+        });
+        promise
+            .catch(err => {
+                cb(err)
+                promise
+                    .then(null, cb2)
+                    .then(cb3)
+                    .then(() => {
+                        return Promise.reject(4)
+                    })
+                    .then(cb4)
+                    .catch(cb5)
+                    .then(cb6)
+            })
+        setTimeout(() => {
+            assert(cb.calledWith(1))
+            assert(cb2.calledWith(1))
+            assert(cb3.called)
+            assert(cb4.notCalled)
+            assert(cb5.calledWith(4))
+            assert(cb6.called)
+            done()
+        }, 100)
+    })
+
+    it('??', done => {
+        // const promise = new Promise(resolve => {
+        //     resolve(1)
+        // });
+        //
+        // promise
+        //     .then(() => {
+        //         return Promise.reject(1)
+        //     })
+        //     .then(null, () => {
+        //         console.log(1)
+        //     })
+        //     .catch(() => {
+        //         console.log(4)
+        //     })
+        //     .then(() => {
+        //         promise
+        //             .then(() => {
+        //                 console.log(2)
+        //             })
+        //             .then(() => {
+        //                 console.log(3)
+        //                 done()
+        //             })
+        //     })
+        const promise = new Promise((_, reject) => {
+            reject(1)
+        });
+        promise
+            .catch(err => {
+                console.log(err, 'err')
+                promise
+                    .then(() => {
+                        console.log('done')
+                        done()
+                    }, err2 => {
+                        console.log(err2, 'err2');
+                        done()
+                    })
+            })
+    })
+
+    it('嵌套catch2', done => {
+        const cb = sinon.fake()
+        const cb2 = sinon.fake()
+        const cb3 = sinon.fake()
+        const cb4 = sinon.fake()
+        const cb41 = sinon.fake()
+        const cb5 = sinon.fake()
+        const cb6 = sinon.fake()
+        const cb7 = sinon.fake()
+        const cb8 = sinon.fake()
+        const cb9 = sinon.fake()
+        const cb10 = sinon.fake()
+        const cb11 = sinon.fake()
+        const cb12 = sinon.fake()
+        const cb13 = sinon.fake()
+        const promise = new Promise((_, reject) => {
+            reject(1)
+        });
+        promise
+            .catch(err => {
+                cb(err)
+                promise
+                    .then(null, cb2)
+                    .then(cb3)
+                    .then(() => {
+                        return Promise.reject(4)
+                    })
+                    .then(cb41, cb4)
+                    .catch(cb5)
+                    .then(cb6)
+                    .then(() => {
+                        return Promise.reject(8)
+                    })
+                    .then(cb7, cb8)
+                    .then(() => {
+                        promise
+                            .then(null, cb9)
+                            .then(cb10)
+                            .then(() => {
+                                return Promise.reject(4)
+                            })
+                            .then(cb11, cb12)
+                            .catch(cb13)
+                    })
+            })
+        setTimeout(() => {
+            assert(cb.calledWith(1))
+            assert(cb2.calledWith(1))
+            assert(cb3.called)
+            assert(cb4.calledWith(4))
+            assert(cb41.notCalled)
+            assert(cb5.notCalled)
+            assert(cb6.called)
+            assert(cb7.notCalled)
+            assert(cb8.calledWith(8))
+            assert(cb9.calledWith(1))
+            assert(cb10.called)
+            assert(cb11.notCalled)
+            assert(cb12.called)
+            assert(cb13.notCalled)
             done()
         }, 100)
     })
@@ -190,31 +330,53 @@ describe('Promise', () => {
         })
 
         it('2.2.4.1 promise.then中嵌套promise.then，先执行第一个在执行里面的', done => {
+            const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const promise = new Promise((resolve) => {
                 resolve('hello')
             })
 
             let firstOnFulfilledFinished = false
             promise.then(() => {
-                promise.then(() => {
-                    assert.equal(firstOnFulfilledFinished, true)
-                    done()
-                })
+                promise
+                    .then(() => {
+                        assert.equal(firstOnFulfilledFinished, true)
+                        return 233
+                    })
+                    .then(cbs[0])
+                    .then(cbs[1])
+                    .then(cbs[2])
+                    .then(() => {
+                        assert(cbs[0].calledWith(233))
+                        assert(cbs[1].called)
+                        assert(cbs[2].called)
+                        done()
+                    })
                 firstOnFulfilledFinished = true
             })
         })
 
         it('2.2.4.2 promise.then中嵌套promise.then，当promise被拒绝时', done => {
+            const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const promise = new Promise((_, reject) => {
                 reject('hello')
             })
 
             let firstOnFulfilledFinished = false
             promise.then(null,() => {
-                promise.then(null, () => {
-                    assert.equal(firstOnFulfilledFinished, true)
-                    done()
-                })
+                promise
+                    .then(null, () => {
+                        assert.equal(firstOnFulfilledFinished, true)
+                        return Promise.reject(1)
+                    })
+                    .then(null, cbs[0])
+                    .then(cbs[1])
+                    .then(cbs[2])
+                    .then(() => {
+                        assert(cbs[0].calledWith(1))
+                        assert(cbs[1].called)
+                        assert(cbs[2].called)
+                        done()
+                    })
                 firstOnFulfilledFinished = true
             })
         })
