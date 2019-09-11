@@ -94,7 +94,7 @@ class Promise {
     static race (arr) {
         if (Array.isArray(arr)) {
             return new Promise((resolve, reject) => {
-                arr.forEach((data, index) => {
+                arr.forEach(data => {
                     if (data instanceof Promise) {
                         data.then(resolve, reject)
                     } else {
@@ -102,6 +102,34 @@ class Promise {
                     }
                 })
             })
+        } else {
+            return Promise.reject(new TypeError())
+        }
+    }
+
+    static allSettled (arr) {
+        if (Array.isArray(arr)) {
+            const toResolve = val => {
+                return new Promise(resolve => {
+                    if (val instanceof Promise) {
+                        val.then(
+                            res => {
+                                resolve({ status: State.fulfilled, value: res })
+                            },
+                            reason => {
+                                resolve({ status: State.rejected, reason })
+                            }
+                        )
+                    } else {
+                        resolve({ status: State.fulfilled, value: val })
+                    }
+                })
+            }
+            const result = []
+            arr.forEach(c => {
+                result.push(toResolve(c))
+            })
+            return Promise.all(result)
         } else {
             return Promise.reject(new TypeError())
         }

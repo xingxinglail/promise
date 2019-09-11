@@ -1132,4 +1132,64 @@ describe('Promise', () => {
                 })
         })
     })
+
+    describe('Promise.allSettled', () => {
+
+        it('基本功能', done => {
+            const p = new Promise(resolve => {
+                setTimeout(resolve, 50, 1)
+            })
+            const p2 = new Promise(resolve => {
+                setTimeout(resolve, 100, 2)
+            })
+            const p3 = Promise.reject(3)
+            Promise.allSettled([p, null, p2, p3, [1, 2], { a: 2 }])
+                .then(res => {
+                    const data = [
+                        {
+                            status: 'fulfilled', value: 1
+                        },
+                        {
+                            status: 'fulfilled', value: null
+                        },
+                        {
+                            status: 'fulfilled', value: 2
+                        },
+                        {
+                            status: 'rejected', reason: 3
+                        },
+                        {
+                            status: 'fulfilled', value: [1, 2]
+                        },
+                        {
+                            status: 'fulfilled', value: { a: 2 }
+                        }
+                    ]
+                    assert.deepEqual(res, data)
+                    done()
+                })
+        })
+
+        it('不会进入onRejected和catch', done => {
+            const cb = sinon.fake()
+            const cb2 = sinon.fake()
+            const cb3 = sinon.fake()
+            const p = new Promise((resolve, reject) => {
+                setTimeout(reject, 50, 1)
+            })
+            const p2 = new Promise((resolve, reject) => {
+                setTimeout(reject, 100, 2)
+            })
+            const p3 = Promise.reject(3)
+            Promise.allSettled([p, p2, p3, [1, 2]])
+                .catch(cb)
+                .then(cb2, cb3)
+                .then(() => {
+                    assert(cb.notCalled)
+                    assert(cb2.called)
+                    assert(cb3.notCalled)
+                    done()
+                })
+        })
+    })
 })
