@@ -8,11 +8,11 @@ const assert = chai.assert
 
 describe('Promise', () => {
 
-    it('Promise 是个类', () => {
+    xit('Promise 是个类', () => {
         assert.isFunction(Promise)
     })
 
-    it('Promise 必须接受一个函数作为参数', () => {
+    xit('Promise 必须接受一个函数作为参数', () => {
         assert.throws(() => {
             // @ts-ignore
             new Promise()
@@ -25,7 +25,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.1.2 fulfilled 状态时：不能再状态为任何其他状态，必须有一个 value，且不可改变', done => {
+    xit('2.1.2 fulfilled 状态时：不能再状态为任何其他状态，必须有一个 value，且不可改变', done => {
         const promise = new Promise((resolve, reject) => {
             resolve('hello')
             reject()
@@ -37,7 +37,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.1.3 rejected 状态时：不能再状态为任何其他状态，必须有一个 reason，且不可改变', done => {
+    xit('2.1.3 rejected 状态时：不能再状态为任何其他状态，必须有一个 reason，且不可改变', done => {
         const promise = new Promise((resolve, reject) => {
             reject('error')
             resolve('hello')
@@ -49,14 +49,14 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2 Promise 必须提供一个then方法', () => {
+    xit('2.2 Promise 必须提供一个then方法', () => {
         const promise = new Promise((resolve) => {
             resolve()
         })
         assert.isFunction(promise.then)
     })
 
-    it('2.2.1 onFulfilled 和 onRejected 都是可选参数,如果 onFulfilled 不是函数，它会被忽略,如果 onRejected 不是函数，它会被忽略', done => {
+    xit('2.2.1 onFulfilled 和 onRejected 都是可选参数,如果 onFulfilled 不是函数，它会被忽略,如果 onRejected 不是函数，它会被忽略', done => {
         const cb = sinon.fake()
         const promise = new Promise((resolve) => {
             resolve('hello')
@@ -70,7 +70,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2.1 onFulfilled 和 onRejected 都是可选参数,如果 onFulfilled 不是函数，它会被忽略,如果 onRejected 不是函数，它会被忽略', done => {
+    xit('2.2.1 onFulfilled 和 onRejected 都是可选参数,如果 onFulfilled 不是函数，它会被忽略,如果 onRejected 不是函数，它会被忽略', done => {
         const cb = sinon.fake()
         const promise = new Promise((_, reject) => {
             reject()
@@ -84,7 +84,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2.2 如果 onFulfilled 是一个函数，它一定是在 fulfilled 状态后调用，并且接受一个参数 value', done => {
+    xit('2.2.2 如果 onFulfilled 是一个函数，它一定是在 fulfilled 状态后调用，并且接受一个参数 value', done => {
         const promise = new Promise((resolve) => {
             resolve('hello')
         });
@@ -95,7 +95,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2.2 Promise 只能调用一次 onFulfilled', done => {
+    xit('2.2.2 Promise 只能调用一次 onFulfilled', done => {
         const fn = sinon.fake()
         const promise = new Promise((resolve) => {
             resolve()
@@ -109,7 +109,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2.3 如果 onRejected 是一个函数，它一定是在 rejected 状态后调用，并且接受一个参数 reason', done => {
+    xit('2.2.3 如果 onRejected 是一个函数，它一定是在 rejected 状态后调用，并且接受一个参数 reason', done => {
         const promise = new Promise((_, reject) => {
             reject('error')
         });
@@ -120,7 +120,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2.3 Promise 只能调用一次 onRejected', done => {
+    xit('2.2.3 Promise 只能调用一次 onRejected', done => {
         const fn = sinon.fake()
         const promise = new Promise((_, reject) => {
             reject()
@@ -136,7 +136,7 @@ describe('Promise', () => {
 
     describe('2.2.4 onFulfilled 或 onRejected 只在执行环境堆栈只包含平台代码之后调用', () => {
 
-        it('2.2.4 正常测试', done => {
+        xit('2.2.4 正常测试', done => {
             const fn = sinon.fake()
             const fn2 = sinon.fake()
             const promise = new Promise((resolve) => {
@@ -152,7 +152,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.2.4.1 promise.then中嵌套promise.then，先执行第一个在执行里面的', done => {
+        xit('2.2.4.1 promise.then中嵌套promise.then，先执行第一个在执行里面的', done => {
             const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const promise = new Promise((resolve) => {
                 resolve('hello')
@@ -178,7 +178,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.2.4.2 promise.then中嵌套promise.then，当promise被拒绝时', done => {
+        xit('2.2.4.2 promise.then中嵌套promise.then，当promise被拒绝时', done => {
             const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const promise = new Promise((_, reject) => {
                 reject('hello')
@@ -205,7 +205,7 @@ describe('Promise', () => {
         })
     })
 
-    it('2.2.5 onFulfilled 和 onRejected 会作为函数形式调用 this undefined', done => {
+    xit('2.2.5 onFulfilled 和 onRejected 会作为函数形式调用 this undefined', done => {
         new Promise((resolve) => {
             resolve()
         }).then(function () {
@@ -220,7 +220,7 @@ describe('Promise', () => {
     })
 
     describe('2.2.6 在同一个 promise 实例中，then 可以链式调用多次', () => {
-        it('当 promise 状态是 fulfilled 时，所有的 onFulfilled 回调回以他们注册时的顺序依次执行', done => {
+        xit('当 promise 状态是 fulfilled 时，所有的 onFulfilled 回调回以他们注册时的顺序依次执行', done => {
             const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const promise = new Promise((resolve) => {
                 resolve('hello')
@@ -245,7 +245,7 @@ describe('Promise', () => {
             })
         })
 
-        it('当 promise 状态是 rejected 时，所有的 onRejected 回调回以他们注册时的顺序依次执行', done => {
+        xit('当 promise 状态是 rejected 时，所有的 onRejected 回调回以他们注册时的顺序依次执行', done => {
             const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const promise = new Promise((_, reject) => {
                 reject('err')
@@ -272,13 +272,13 @@ describe('Promise', () => {
     })
 
     describe('2.2.7', () => {
-        it('2.2.7 then必须返回一个promise', () => {
+        xit('2.2.7 then必须返回一个promise', () => {
             const promise = new Promise(() => {})
             const promise2 = promise.then()
             assert(promise2 instanceof Promise)
         })
 
-        it('2.2.7.1 如果then(success, fail) 中的 success 返回一个值x, 运行 promise2.resolve(x)', done => {
+        xit('2.2.7.1 如果then(success, fail) 中的 success 返回一个值x, 运行 promise2.resolve(x)', done => {
             const promise = new Promise(resolve => {
                 resolve('hi')
             })
@@ -296,7 +296,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('2.2.7.1 如果then(success, fail) 中的 fail 返回一个值x, 运行 promise2.resolve(x)', done => {
+        xit('2.2.7.1 如果then(success, fail) 中的 fail 返回一个值x, 运行 promise2.resolve(x)', done => {
             const promise = new Promise((_, reject) => {
                 reject('err')
             })
@@ -314,7 +314,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('2.2.7.1.2 success 的返回值是一个 Promise 实例', done => {
+        xit('2.2.7.1.2 success 的返回值是一个 Promise 实例', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const promise = new Promise(resolve => {
                 resolve()
@@ -337,7 +337,7 @@ describe('Promise', () => {
             }, 10)
         })
 
-        it('2.2.7.1.2 success 的返回值是一个 Promise 实例，且失败了', done => {
+        xit('2.2.7.1.2 success 的返回值是一个 Promise 实例，且失败了', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const promise = new Promise(resolve => {
                 resolve()
@@ -360,7 +360,7 @@ describe('Promise', () => {
             }, 10)
         })
 
-        it('2.2.7.1.2 fail 的返回值是一个 Promise 实例', done => {
+        xit('2.2.7.1.2 fail 的返回值是一个 Promise 实例', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const promise = new Promise((_, reject) => {
                 reject()
@@ -383,7 +383,7 @@ describe('Promise', () => {
             }, 10)
         })
 
-        it('2.2.7.1.2 fail 的返回值是一个 Promise 实例，且失败了', done => {
+        xit('2.2.7.1.2 fail 的返回值是一个 Promise 实例，且失败了', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const promise = new Promise((_, reject) => {
                 reject()
@@ -406,7 +406,7 @@ describe('Promise', () => {
             }, 10)
         })
 
-        it('2.2.7.2 如果success抛出一个异常e,promise2 必须被拒绝', done => {
+        xit('2.2.7.2 如果success抛出一个异常e,promise2 必须被拒绝', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const promise = new Promise(resolve => {
                 resolve()
@@ -423,7 +423,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.2.7.2 如果fail抛出一个异常e,promise2 必须被拒绝', done => {
+        xit('2.2.7.2 如果fail抛出一个异常e,promise2 必须被拒绝', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const promise = new Promise((_, reject) => {
                 reject()
@@ -440,7 +440,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.7.7.3', done => {
+        xit('2.7.7.3', done => {
             const promise = new Promise(resolve => {
                 resolve('hi')
             })
@@ -454,7 +454,7 @@ describe('Promise', () => {
 
     describe('2.3.1 如果promise和x引用同一个对象，则用TypeError作为原因拒绝（reject）promise', () => {
 
-        it('执行onFulfilled', done => {
+        xit('执行onFulfilled', done => {
             const p = Promise.resolve().then(() => {
                 return p
             })
@@ -464,7 +464,7 @@ describe('Promise', () => {
             })
         })
 
-        it('执行onRejected', done => {
+        xit('执行onRejected', done => {
             const p = Promise.reject().then(null, () => {
                 return p
             })
@@ -477,7 +477,7 @@ describe('Promise', () => {
 
     describe('2.3.3.1: Let `then` be `x.then', () => {
 
-        it('`x` is an object with null prototype', done => {
+        xit('`x` is an object with null prototype', done => {
             let numberOfTimesThenWasRetrieved = 0
             function xFactory() {
                 return Object.create(null, {
@@ -504,7 +504,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('`x` is a function', done => {
+        xit('`x` is a function', done => {
             let numberOfTimesThenWasRetrieved = 0
             function xFactory() {
                 function x () { }
@@ -531,7 +531,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('`y` is a thenable that fulfills but then throws', done => {
+        xit('`y` is a thenable that fulfills but then throws', done => {
             function yFactory () {
                 return {
                     then (onFulfilled) {
@@ -562,7 +562,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('`y` is a thenable that tries to fulfill twice for an asynchronously-fulfilled custom thenable', done => {
+        xit('`y` is a thenable that tries to fulfill twice for an asynchronously-fulfilled custom thenable', done => {
             function outer (value) {
                 return {
                     then (onFulfilled) {
@@ -593,7 +593,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('`y` is an already-fulfilled promise for a synchronously-fulfilled custom thenable `then` calls `resolvePromise` synchronously', done => {
+        xit('`y` is an already-fulfilled promise for a synchronously-fulfilled custom thenable `then` calls `resolvePromise` synchronously', done => {
             const p = new Promise((res) => {
                 const obj = {
                     then (onFulfilled) {
@@ -618,7 +618,7 @@ describe('Promise', () => {
 
     describe('2.3.3 如果then(success, fail) 中的 success 返回的x是个对象或者方法', () => {
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable不继续', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable不继续', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const x = {
                 then () {
@@ -639,7 +639,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable继续', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable继续', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const x = {
                 then (res) {
@@ -662,7 +662,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable继续，接收的参数是一个thenable', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable继续，接收的参数是一个thenable', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const x = {
                 then (res) {
@@ -690,7 +690,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable被reject', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable被reject', done => {
             const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const x = {
                 then (_, reject) {
@@ -714,7 +714,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then不是一个方法，用x来完成promsie', done => {
+        xit('2.3.3.3 如果then不是一个方法，用x来完成promsie', done => {
             const cb = sinon.fake()
             const x = {
                 x: '1',
@@ -734,7 +734,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.4 如果x既不是对象也不是函数，用x完成promise', done => {
+        xit('2.3.4 如果x既不是对象也不是函数，用x完成promise', done => {
             const cb = sinon.fake()
             const x = 'hi'
             const promise = new Promise(resolve => {
@@ -753,7 +753,7 @@ describe('Promise', () => {
 
     describe('2.3.3 如果then(success, fail) 中的 fail 返回的x是个对象或者方法', () => {
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable不继续', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable不继续', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const x = {
                 then () {
@@ -774,7 +774,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable继续', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable继续', done => {
             const cbs = [sinon.fake(), sinon.fake()]
             const x = {
                 then (res) {
@@ -797,7 +797,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable被reject', done => {
+        xit('2.3.3.3 如果then是一个方法，把x当作this来调用它, thenable被reject', done => {
             const cbs = [sinon.fake(), sinon.fake(), sinon.fake()]
             const x = {
                 then (_, reject) {
@@ -821,7 +821,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.3.3 如果then不是一个方法，用x来完成promsie', done => {
+        xit('2.3.3.3 如果then不是一个方法，用x来完成promsie', done => {
             const cb = sinon.fake()
             const x = {
                 x: '1',
@@ -841,7 +841,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.4 如果x既不是对象也不是函数，用x完成promise', done => {
+        xit('2.3.4 如果x既不是对象也不是函数，用x完成promise', done => {
             const cb = sinon.fake()
             const x = 'hi'
             const promise = new Promise((_, reject) => {
@@ -857,7 +857,7 @@ describe('Promise', () => {
             })
         })
 
-        it('2.3.4 如果x是Object.create(Function.prototype)', done => {
+        xit('2.3.4 如果x是Object.create(Function.prototype)', done => {
             const x = {
                 then: Object.create(Function.prototype)
             }
@@ -877,7 +877,7 @@ describe('Promise', () => {
 
     describe('Promise.resolve', () => {
 
-        it('基本功能', done => {
+        xit('基本功能', done => {
             const res = Promise.resolve(11)
             res
                 .then(res => {
@@ -897,7 +897,7 @@ describe('Promise', () => {
 
     describe('Promise.reject', () => {
 
-        it('基本功能', done => {
+        xit('基本功能', done => {
             const res = Promise.reject(11)
             res
                 .then(null, res => {
@@ -916,7 +916,7 @@ describe('Promise', () => {
     })
 
     describe('catch', () => {
-        it('触发catch', done => {
+        xit('触发catch', done => {
             const cb = sinon.fake()
             const cb2 = sinon.fake()
             const cb3 = sinon.fake()
@@ -953,7 +953,7 @@ describe('Promise', () => {
             }, 100)
         })
 
-        it('嵌套catch', done => {
+        xit('嵌套catch', done => {
             const cb = sinon.fake()
             const cb2 = sinon.fake()
             const cb3 = sinon.fake()
@@ -987,7 +987,7 @@ describe('Promise', () => {
             }, 100)
         })
 
-        it('嵌套catch2', done => {
+        xit('嵌套catch2', done => {
             const cb = sinon.fake()
             const cb2 = sinon.fake()
             const cb3 = sinon.fake()
@@ -1054,7 +1054,7 @@ describe('Promise', () => {
 
     describe('Promise.all', () => {
 
-        it('基本功能', done => {
+        xit('基本功能', done => {
             const p = new Promise(resolve => {
                 setTimeout(resolve, 50, 1)
             })
@@ -1069,7 +1069,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('Promise.all catch', done => {
+        xit('Promise.all catch', done => {
             const p = new Promise(resolve => {
                 setTimeout(resolve, 50, 1)
             })
@@ -1087,7 +1087,7 @@ describe('Promise', () => {
 
     describe('Promise.race', () => {
 
-        it('基本功能', done => {
+        xit('基本功能', done => {
             const p = new Promise(resolve => {
                 setTimeout(resolve, 50, 1)
             })
@@ -1102,7 +1102,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('传入非Promise对象', done => {
+        xit('传入非Promise对象', done => {
             const p = new Promise(resolve => {
                 setTimeout(resolve, 50, 1)
             })
@@ -1117,7 +1117,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('catch', done => {
+        xit('catch', done => {
             const p = new Promise(resolve => {
                 setTimeout(resolve, 50, 1)
             })
@@ -1135,7 +1135,7 @@ describe('Promise', () => {
 
     describe('Promise.allSettled', () => {
 
-        it('基本功能', done => {
+        xit('基本功能', done => {
             const p = new Promise(resolve => {
                 setTimeout(resolve, 50, 1)
             })
@@ -1170,7 +1170,7 @@ describe('Promise', () => {
                 })
         })
 
-        it('不会进入onRejected和catch', done => {
+        xit('不会进入onRejected和catch', done => {
             const cb = sinon.fake()
             const cb2 = sinon.fake()
             const cb3 = sinon.fake()
@@ -1189,6 +1189,120 @@ describe('Promise', () => {
                     assert(cb2.called)
                     assert(cb3.notCalled)
                     done()
+                })
+        })
+    })
+
+    describe('Promise 执行顺序', () => {
+
+        xit('可以顺序执行内部 Promise', done => {
+            const fn = sinon.fake()
+            const fn2 = sinon.fake()
+            const fn3 = sinon.fake()
+            const fn4 = sinon.fake()
+            const fn5 = sinon.fake()
+            const fn6 = sinon.fake()
+
+            new Promise(resolve => {
+                fn()
+                resolve()
+            })
+                .then(() => {
+                    fn2()
+                    return new Promise(resolve2 => {
+                        fn3()
+                        resolve2()
+                    })
+                        .then(() => {
+                            fn4()
+                        })
+                        .then(() => {
+                            fn5()
+                        })
+                })
+                .then(() => {
+                    fn6()
+                    done()
+                    assert(fn.calledBefore(fn2))
+                    assert(fn2.calledBefore(fn3))
+                    assert(fn3.calledBefore(fn4))
+                    assert(fn4.calledBefore(fn5))
+                    assert(fn5.calledBefore(fn6))
+                })
+        })
+
+        it('不带 return 执行顺序', done => {
+            const cb = sinon.fake()
+            const cb2 = sinon.fake()
+            const cb3 = sinon.fake()
+            const cb4 = sinon.fake()
+            const cb5 = sinon.fake()
+            const cb6 = sinon.fake()
+
+            // 外部第一个 then 先同步执行
+            // 外部第二个 then 是第一个 then 的返回值，同步执行，同步注册回调
+            // 异步执行第一个 then 的回调
+            // 创建新的 Promise，同步执行 内部第一个 then ，第二个 then 是第一个 then 的返回值，同步执行并注册回调
+            // 调用 resolve2，异步执行 then 的回调，执行完成之后，立即执行外部第二个 then
+            // 最后再回来之后 内部第二个 then
+
+            new Promise(resolve => {
+                cb()
+                resolve()
+            })
+                .then(() => {
+                    cb2()
+                    new Promise(resolve2 => {
+                        cb3()
+                        resolve2()
+                    })
+                        .then(cb4)
+                        .then(cb5)
+                })
+                .then(cb6)
+            setTimeout(() => {
+                done()
+                assert(cb.calledBefore(cb2))
+                assert(cb2.calledBefore(cb3))
+                assert(cb3.calledBefore(cb4))
+                assert(cb4.calledBefore(cb5))
+                assert(cb6.calledBefore(cb5))
+            }, 50)
+        })
+
+        xit('不使用链式调用执行顺序', done => {
+            const fn = sinon.fake()
+            const fn2 = sinon.fake()
+            const fn3 = sinon.fake()
+            const fn4 = sinon.fake()
+            const fn5 = sinon.fake()
+            const fn6 = sinon.fake()
+
+            new Promise(resolve => {
+                fn()
+                resolve()
+            })
+                .then(() => {
+                    fn2()
+                    const p = new Promise(resolve2 => {
+                        fn3()
+                        resolve2()
+                    })
+                    p.then(() => {
+                        fn4()
+                    })
+                    p.then(() => {
+                        fn5()
+                    })
+                })
+                .then(() => {
+                    fn6()
+                    done()
+                    assert(fn.calledBefore(fn2))
+                    assert(fn2.calledBefore(fn3))
+                    assert(fn3.calledBefore(fn4))
+                    assert(fn4.calledBefore(fn5))
+                    assert(fn5.calledBefore(fn6))
                 })
         })
     })
