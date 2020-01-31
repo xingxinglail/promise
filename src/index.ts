@@ -34,7 +34,6 @@ class Promise {
         if (typeof fn !== 'function') {
             throw new Error(`Promise resolver ${fn} is not a function`)
         }
-
         fn(this.resolve.bind(this), this.reject.bind(this))
     }
 
@@ -136,81 +135,64 @@ class Promise {
     }
 
     private resolve (value?) {
-        nextTick(() => {
-            if (this.state !== State.pending) return
-            this.state = State.fulfilled
-            this.value = value
-            this.callbacks.forEach(cb => {
-                try {
-                    let res
-                    if (cb[0]){
-                        res = cb[0].call(undefined, value)
-                    } else {
-                        // 2.2.7.3  onFulfilled不是一个函数时 value要传给下一个then
-                        res = value
-                    }
-                    cb[2].resolveWith.call(cb[2], res)
-                } catch (err) {
-                    cb[2].reject(err)
-                }
-            })
+        if (this.state !== State.pending) return
+        this.state = State.fulfilled
+        this.value = value
+        this.callbacks.forEach(cb => {
+            if (cb[0]) cb[0]()
         })
     }
 
     private reject (reason?) {
-        nextTick(() => {
-            if (this.state !== State.pending) return
-            this.state = State.rejected
-            this.reason = reason
-            this.callbacks.forEach(cb => {
-                try {
-                    if (cb[1]) {
-                        const res = cb[1].call(undefined, reason)
-                        cb[2].resolveWith.call(cb[2], res)
-                    } else {
-                        cb[2].reject(reason)
-                    }
-                } catch (err) {
-                    cb[2].reject(err)
-                }
-            })
+        if (this.state !== State.pending) return
+        this.state = State.rejected
+        this.reason = reason
+        this.callbacks.forEach(cb => {
+            if (cb[1]) cb[1]()
         })
     }
 
     then (onFulfilled?, onRejected?) {
         const callback = []
-        if (typeof onFulfilled === 'function') {
-            if (this.state === State.fulfilled) {
-                // 2.2.4 promise.then中嵌套promise.then，如果已经 fulfilled 就直接调用onFulfilled
-                // 因为在当前tick中，嵌套的promise.then还未存放到callbacks里面
-                nextTick(() => {
+        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
+        onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason }
+        const fulfilledHandle = () => {
+            nextTick(() => {
+                try {
                     const value = onFulfilled.call(undefined, this.value)
                     // 处理后续
                     callback[2].resolveWith.call(callback[2], value)
-                })
-            } else {
-                callback[0] = onFulfilled
-            }
+                } catch (err) {
+                    callback[2].reject.call(callback[2], err);
+                }
+            })
         }
-        if (typeof onRejected === 'function') {
-            if (this.state === State.rejected) {
-                // 2.2.4 promise.then中嵌套promise.then，如果已经 rejected 就直接调用 onRejected
-                // 因为在当前tick中，嵌套的promise.then还未存放到callbacks里面
-                nextTick(() => {
-                    const value = onRejected.call(undefined, this.reason)
-                    // 处理后续
+        if (this.state === State.fulfilled) {
+            fulfilledHandle()
+        } else {
+            callback[0] = fulfilledHandle
+        }
+        const rejectedHandle = () => {
+            nextTick(() => {
+                try {
+                    let value = onRejected.call(undefined, this.reason)
                     callback[2].resolveWith.call(callback[2], value)
-                })
-            } else {
-                callback[1] = onRejected
-            }
+                } catch (err) {
+                    callback[2].reject.call(callback[2], err)
+                }
+            })
+        }
+        if (this.state === State.rejected) {
+            rejectedHandle()
+        } else {
+            callback[1] = rejectedHandle
         }
         callback[2] = new Promise(() => {})
         this.callbacks.push(callback)
         return callback[2]
     }
 
-    catch (onRejected?) {
+    catch (onRejected) {
         return this.then(null, onRejected)
     }
 
